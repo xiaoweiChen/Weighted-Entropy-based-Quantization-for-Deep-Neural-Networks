@@ -131,7 +131,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 ​	&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;	**for** $$c_k'  \in [c_{k-1}, c_{k+1}]$$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;		&emsp;&emsp;&emsp;&emsp;$$S' \leftarrow$$ S with $$c_0, ..., c'_k, ..., c_N$$ 
+​	&emsp;&emsp;	&emsp;&emsp;		&emsp;&emsp;&emsp;&emsp; $$S' \leftarrow$$ S with $$c_0, ..., c'_k, ..., c_N$$ 
 
 ​		&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	**if** $$S' > S$$ **then**
 
@@ -199,7 +199,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **算法2：激活输出量化**
 
-**function** BinaryToLogQuant($a_n$)
+**function** BinaryToLogQuant($$a_n$$)
 
 &emsp;&emsp;**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
 
@@ -241,7 +241,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;&emsp;**for** k = 0 to $$N_a$$- 1 **do**
 
-&emsp;&emsp;&emsp;&emsp;evel_idx$$_k \leftarrow$$ BinaryToLogQuant($a_n$)
+&emsp;&emsp;&emsp;&emsp;evel_idx $$_k \leftarrow$$ BinaryToLogQuant($$a_n$$)
 
 &emsp;&emsp;**if** index == 0 **then**
 
