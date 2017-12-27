@@ -103,7 +103,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 (3) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n%20%3D%20%5Cfrac%7B%5Csum_mi_%7B%28n%2Cm%29%7D%7D%7B%5Cleft%7C%20C_n%20%5Cright%7C%7D) (代表重要性)
 
-在这个等式中，$P_n$表示有多少个权重在集群$C_n$的范围内，并且$I_n$代表$C_n$集群中所有权重的平均重要性。大致的说，集群组中具有大量的权重，将会生成很高的的$I_n$，不过$P_n$非常小(高重要性的频率低)。根据我们的经验，通过找到集群组的最大S值，其量级会稀疏的分布在特别大的值或特别小的值附近，就如图1所示。因此，我们认为我们的权重量化有如下问题：
+在这个等式中，![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20P_n)表示有多少个权重在集群![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20C_n)的范围内，并且![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n)代表![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20C_n)集群中所有权重的平均重要性。大致的说，集群组中具有大量的权重，将会生成很高的的![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n)，不过![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20P_n)非常小(高重要性的频率低)。根据我们的经验，通过找到集群组的最大S值，其量级会稀疏的分布在特别大的值或特别小的值附近，就如图1所示。因此，我们认为我们的权重量化有如下问题：
 
 **问题1：权重量化**
 
@@ -117,7 +117,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** OptSearch(N, w)
 
-​	&emsp;&emsp;**for** k = 0 to $N_w$ - 1 do
+​	&emsp;&emsp;**for** k = 0 to N_w​ - 1 do
 
 ​		&emsp;&emsp;&emsp;&emsp;$i_k\leftarrow f_i(w_k)$
 
