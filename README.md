@@ -111,13 +111,15 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 我们使用算法1来解决这个问题：
 
+Inline math: $$\int_{-\infty}^\infty g(x) dx$$
+
 ----
 
 **算法1：权重量化**
 
 **function** OptSearch(N, w)
 
-​	&emsp;&emsp;**for** k = 0 to N_w​ - 1 do
+​	&emsp;&emsp;**for** k = 0 to N_w - 1 do
 
 ​		&emsp;&emsp;&emsp;&emsp;$i_k\leftarrow f_i(w_k)$
 
