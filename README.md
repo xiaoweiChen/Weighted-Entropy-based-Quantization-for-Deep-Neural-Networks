@@ -117,9 +117,9 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** OptSearch(N, w)
 
-​	**for** k = 0 to $$N_w$$ - 1 do
+&emsp;**for** k = 0 to $$N_w$$ - 1 do
 
-​		$$i_k\leftarrow f_i(w_k)$$
+&emsp;&emsp;$$i_k\leftarrow f_i(w_k)$$
 
 ​	$s \leftarrow sort([i_0,...,i_{N_w -1}] )$
 
