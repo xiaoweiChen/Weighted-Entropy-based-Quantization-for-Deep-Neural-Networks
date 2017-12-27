@@ -149,7 +149,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;**return** $$[r_0:r_{N-1}],[b_0:b_N]$$
 
-**function** Quantize($$w_n$$, [$$r_0:r_{N-1}$$], [$$b_0:b_N$]$)
+**function** Quantize($$w_n$$, [$$r_0:r_{N-1}$$], [$$b_0:b_N]$$)
 
 ​&emsp;**return** $$r_k$$ for k 满足条件 $$b_k \le w_n < b_{k+1}$$
 
