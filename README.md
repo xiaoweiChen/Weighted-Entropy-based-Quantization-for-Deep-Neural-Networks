@@ -307,11 +307,11 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 图2用我们的方法对量化后的CNN的网络进行精度测试。可以看到对CNN进行限制位宽的量化可以获得较高的精度。
 
-![](images/AlexNet.png)
+![](images/AlexNet.PNG)
 
-![](images/GoogLeNet.png)
+![](images/GoogLeNet.PNG)
 
-![](images/ResNet.png)
+![](images/ResNet.PNG)
 
 > 图2 Top-1和Top-5都是在微调模型后，进行量化的精度。虚线代表使用全精度算法网络的基线准确度。
 
