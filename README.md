@@ -201,65 +201,65 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** BinaryToLogQuant($$a_n$$)
 
-​	**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
+​​&emsp;**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
 
 **function** LogQuantToBinary(index)
 
-​	**if** index == 0 **then**
+​​&emsp;**if** index == 0 **then**
 
-​		**return** 0
+​​&emsp;​&emsp;**return** 0
 
-​	**else**
+​​&emsp;**else**
 
-​		**return** $$2^{\frac{1}{16}\times (fsr +step \times (index-1))}$$
+​​&emsp;​&emsp;**return** $$2^{\frac{1}{16}\times (fsr +step \times (index-1))}$$
 
 **function** WeightedLogQuantReLU($$a_n$$)
 
-​	**if** $$a_n$$ < 0 **then**
+​&emsp;**if** $$a_n$$ < 0 **then**
 
-​		**return** 0
+​&emsp;​&emsp;**return** 0
 
-​	level_idx $$\leftarrow BinaryToLogQuant(a_n)$$
+​&emsp;level_idx $$\leftarrow BinaryToLogQuant(a_n)$$
 
-​	**if** level_idx $$\le$$ 0 **then**
+​&emsp;**if** level_idx $$\le$$ 0 **then**
 
-​		**return** 0
+​&emsp;​&emsp;**return** 0
 
-​	**else if** level_idx $$\ge$$ N - 1 **then**
+​&emsp;**else if** level_idx $$\ge$$ N - 1 **then**
 
-​		**return** LogQuantToBinary(N - 1)
+​&emsp;​&emsp;**return** LogQuantToBinary(N - 1)
 
-​	**else**
+​&emsp;**else**
 
-​		**return** LogQuantToBinary(level_idx)
+​&emsp;​&emsp;**return** LogQuantToBinary(level_idx)
 
 **function** ReprImportance(index)
 
-​	**return** LogQuantToBinary(index)
+​&emsp;**return** LogQuantToBinary(index)
 
 **function** RelativeFrequency(index, a)
 
-​	**for** k = 0 to $$N_a$$ - 1 **do**
+​&emsp;**for** k = 0 to $$N_a$$ - 1 **do**
 
-​		level_idx$$_k \leftarrow$$ BinaryToLogQuant($a_n$)
+​&emsp;​&emsp;level_idx$$_k \leftarrow$$ BinaryToLogQuant($$a_n$$)
 
-​	**if** index == 0 **then**
+​&emsp;**if** index == 0 **then**
 
-​		**return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
+​&emsp;​&emsp;**return** $$\left| \{ a_n| level\_idx_n\le0\}\right|$$
 
-​	**else if** index == N - 1 **then**
+​&emsp;**else if** index == N - 1 **then**
 
-​		**return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
+​&emsp;​&emsp;**return** $$\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$$
 
-​	**else**
+​​&emsp;**else**
 
-​		**return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
+​&emsp;​&emsp;**return** $$\left|\{ a_n | level\_idx_n =index \}  \right|$$
 
-* $N:$ 级数
-* $N_a$：激活输出的总量
-* $a_n$：激活输出中第n个值
-* $fsr$：最优的fsr值(整型)
-* $step$：最优的step值(2的倍数)
+* $$N:$$ 级数
+* $$N_a$$：激活输出的总量
+* $$a_n$$：激活输出中第n个值
+* $$fsr$$：最优的fsr值(整型)
+* $$step$$：最优的step值(2的倍数)
 
 ---
 
