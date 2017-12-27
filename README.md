@@ -121,9 +121,9 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;&emsp;$$i_k\leftarrow f_i(w_k)$$
 
-​	$s \leftarrow sort([i_0,...,i_{N_w -1}] )$
+​&emsp;$$s \leftarrow sort([i_0,...,i_{N_w -1}] )$$
 
-​	$ c_0, ..., c_N \leftarrow$ initial cluster boundary
+&emsp;$$ c_0, ..., c_N \leftarrow$$ initial cluster boundary
 
 ​	**while** S is increased **do**
 
