@@ -77,7 +77,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 ![](images/weighted_quantization.png)
 
-> 图1 比较各种量化方法。其中权重值是从GoogLeNet的第二个![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%203%5Ctimes3) 卷积层获取。每种量化方式都将该分布量化到24级。我们使用$2^{0.5}$作为对数量化的底， 并对线性和对数量化进行优化，尽可能最小化L2归一化对整体激活输出的影响。
+> 图1 比较各种量化方法。其中权重值是从GoogLeNet的第二个$$3 \times 3$$卷积层获取。每种量化方式都将该分布量化到24级。我们使用$2^{0.5}$作为对数量化的底， 并对线性和对数量化进行优化，尽可能最小化L2归一化对整体激活输出的影响。
 
 诚然，线性量化不会考虑权重分布，对数量化会对近似为0的数给予太多的量化级数，我们的方法得到的分布更集中于那些既不太小也不太大的值。通过对量化的评估，我们将会在后面展示这种比别于传统方法效率更高的方法。
 
@@ -89,21 +89,21 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 我们量化方法的思想是，通过某种方法将权重分成N个集群，这样就会有更多的集群分布在权重较为重要范围内，为每一个集群分配一个值，并且将每个集群中的权重量化到这个表示值内。为此，我们需要评估集群的质量，以及找到一组集群(由多个集群组成)使用该质量进行优化。
 
-第一步，我们定义一个量化度量来决定单个权重的重要性(或影响权重的输出质量)。由于较大的权重对于输出质量有较大的影响，我们根据经验定义了重要性![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20i_%7B%28n%2Cm%29%7D)，其为第n个集群的第m个权重的重要性。例如，![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20w_%7B%28n%2Cm%29%7D)与其重要性的大小成一定的比例，比如，![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20i_%7B%28n%2Cm%29%7D%3Dw%5E2_%7B%28n%2Cm%29%7D)。
+第一步，我们定义一个量化度量来决定单个权重的重要性(或影响权重的输出质量)。由于较大的权重对于输出质量有较大的影响，我们根据经验定义了重要性$$i_{(n,m)}$$，其为第n个集群的第m个权重的重要性。例如，与$$w_{(n,m)}$$其重要性的大小成一定的比例，比如，$$i_{(n, w)}=w^2_{(n, m)}$$。
 
 基于每个权重的重要性，我们推导出一种用于评估集群结果(基于加权熵)质量的方式(例如：量化结果)。加权熵源于物理学中熵的概念，旨在考虑数据的重要性。
 
-对于一组集群![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20C_0%2C...%2CC_%7BN-1%7D)，加权熵S可定义为：
+对于一组集群$$C_0,...,C_{N-1}$$，加权熵S可定义为：
 
-(1) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20S%20%3D%20-%5Csum_nI_nP_nlogP_n)
+(1) $$S = -\sum_nI_nP_nlogP_n$$
 
 这里：
 
-(2) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20P_n%20%3D%20%5Cfrac%7B%5Cleft%7C%20C_n%20%5Cright%7C%7D%7B%5Csum_k%5Cleft%7C%20C_k%20%5Cright%7C%7D) (相对频率)
+(2) $$P_n = \frac{\left| C_n \right|}{\sum_k\left| C_k \right|}$$  (相对频率)
 
-(3) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n%20%3D%20%5Cfrac%7B%5Csum_mi_%7B%28n%2Cm%29%7D%7D%7B%5Cleft%7C%20C_n%20%5Cright%7C%7D) (代表重要性)
+(3) $$I_n = \frac{\sum_mi_{(n,m)}}{\left| C_n \right|}$$ (代表重要性)
 
-在这个等式中，![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20P_n)表示有多少个权重在集群![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20C_n)的范围内，并且![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n)代表![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20C_n)集群中所有权重的平均重要性。大致的说，集群组中具有大量的权重，将会生成很高的的![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n)，不过![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20P_n)非常小(高重要性的频率低)。根据我们的经验，通过找到集群组的最大S值，其量级会稀疏的分布在特别大的值或特别小的值附近，就如图1所示。因此，我们认为我们的权重量化有如下问题：
+在这个等式中，$$P_n$$表示有多少个权重在集群$$C_n$$的范围内，并且$$I_n$$代表$$C_n$$集群中所有权重的平均重要性。大致的说，集群组中具有大量的权重，将会生成很高的的$$I_n$$，不过$$P_n$$非常小(高重要性的频率低)。根据我们的经验，通过找到集群组的最大S值，其量级会稀疏的分布在特别大的值或特别小的值附近，就如图1所示。因此，我们认为我们的权重量化有如下问题：
 
 **问题1：权重量化**
 
@@ -111,80 +111,78 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 我们使用算法1来解决这个问题：
 
-Inline math: $$\int_{-\infty}^\infty g(x) dx$$
-
 ----
 
 **算法1：权重量化**
 
 **function** OptSearch(N, w)
 
-​	&emsp;&emsp;**for** k = 0 to N_w - 1 do
+​	&emsp;&emsp;**for** k = 0 to $$N_w$$ - 1 do
 
-​		&emsp;&emsp;&emsp;&emsp;$i_k\leftarrow f_i(w_k)$
+​		&emsp;&emsp;&emsp;&emsp;$$i_k\leftarrow f_i(w_k)$$
 
-​	&emsp;&emsp;$s \leftarrow sort([i_0,...,i_{N_w -1}] )$
+​	&emsp;&emsp;$$s \leftarrow sort([i_0,...,i_{N_w -1}] )$$
 
-​	&emsp;&emsp;$ c_0, ..., c_N \leftarrow$ initial cluster boundary
+​	&emsp;&emsp;$$c_0, ..., c_N \leftarrow$$ initial cluster boundary
 
 &emsp;&emsp;	**while** S is increased **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;**for** k = 1 to $N - 1$ **do**
+​	&emsp;&emsp;	&emsp;&emsp;**for** k = 1 to $$N - 1$$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;	**for** $c_k'  \in [c_{k-1}, c_{k+1}]$ **do**
+​	&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;	**for** $$c_k'  \in [c_{k-1}, c_{k+1}]$$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;		&emsp;&emsp;&emsp;&emsp;$S' \leftarrow$ S with $c_0, ..., c'_k, ..., c_N$ 
+​	&emsp;&emsp;	&emsp;&emsp;		&emsp;&emsp;&emsp;&emsp;$$S' \leftarrow$$ S with $$c_0, ..., c'_k, ..., c_N$$ 
 
-​		&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	**if** $S' > S$ **then**
+​		&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	**if** $$S' > S$$ **then**
 
-​				&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;$c_k \leftarrow c'_k$ 
+​				&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;$$c_k \leftarrow c'_k$$ 
 
-&emsp;&emsp;	**for** k = 0 to $N - 1$ **do**
+&emsp;&emsp;	**for** k = 0 to $$N - 1$$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$
+​	&emsp;&emsp;	&emsp;&emsp;$$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$$
 
- &emsp;&emsp;&emsp;&emsp;		$r_k \leftarrow f^{-1}_i(I_k)$
+ &emsp;&emsp;&emsp;&emsp;		$$r_k \leftarrow f^{-1}_i(I_k)$$
 
-&emsp;&emsp;&emsp;&emsp;		$b_k \leftarrow f^{-1}_i(s[c_k])$
+&emsp;&emsp;&emsp;&emsp;		$$b_k \leftarrow f^{-1}_i(s[c_k])$$
 
-&emsp;&emsp;	$b_N \leftarrow \infty$
+&emsp;&emsp;	$$b_N \leftarrow \infty$$
 
-&emsp;&emsp;	**return** $[r_0:r_{N-1}],[b_0:b_N]$
+&emsp;&emsp;	**return** $$[r_0:r_{N-1}],[b_0:b_N]$$
 
-**function** Quantize($w_n$, [$r_0:r_{N-1}$], [$b_0:b_N$])
+**function** Quantize($$w_n$$, [$$r_0:r_{N-1}$$], [$$b_0:b_N$$])
 
-​	&emsp;&emsp;**return** $r_k$ for k 满足条件 $b_k \le w_n < b_{k+1}$
+​	&emsp;&emsp;**return** $$r_k$$ for k 满足条件 $$b_k \le w_n < b_{k+1}$$
 
-* $N$：级数
-* $N_w$：权重的数量
-* $w_n$：第n个权重值
-* $i_n$：第n个权重的重要性
-* $f_i$：映射函数的重要性
-* $c_i$：集群的边界索引
-* $S$： 整体的加权熵
+* $$N$$：级数
+* $$N_w$$：权重的数量
+* $$w_n$$：第n个权重值
+* $$i_n$$：第n个权重的重要性
+* $$f_i$$：映射函数的重要性
+* $$c_i$$：集群的边界索引
+* $$S$$： 整体的加权熵
 
 ---
 
-这里需要注意的是，算法1只对非负的权值进行量化。这是因为加权熵理论的局限性所导致，我们无法获得既有负面又有非负面的聚类结果。因此，我们将权重分为两类，一类为负权重，另一类为非负权重。并且，使用我们的算法进行量化时，每组都进行$\frac{N}{2}$级量化。
+这里需要注意的是，算法1只对非负的权值进行量化。这是因为加权熵理论的局限性所导致，我们无法获得既有负面又有非负面的聚类结果。因此，我们将权重分为两类，一类为负权重，另一类为非负权重。并且，使用我们的算法进行量化时，每组都进行$$\frac{N}{2}$$级量化。
 
-算法开始时，我们计算了每个权重的重要性(第2和3行)。这个过程有映射函数$f_i$完成，其使用$w_k$计算得到$i_k$。这个过程中，我们的经验使用的是平方函数$f_i(w) = w^2$来计算每个权重的重要性。在获得了所有权重的重要性值之后，我们会按增序的方式对结果进行排序(第4行)。
+算法开始时，我们计算了每个权重的重要性(第2和3行)。这个过程有映射函数$$f_i$$完成，其使用$$w_k$$计算得到$$i_k$$。这个过程中，我们的经验使用的是平方函数$$f_i(w) = w^2$$来计算每个权重的重要性。在获得了所有权重的重要性值之后，我们会按增序的方式对结果进行排序(第4行)。
 
-基于对重要性值的排序，算法会对集群进行边界索引的初始化从$c_0$到$c_N$(第5行)，
+基于对重要性值的排序，算法会对集群进行边界索引的初始化从$$c_0$$到$$c_N$$(第5行)，
 
-> 集群边界索引决定了权重属于哪个集群。准确的来说，集群$C_i$中包含了权重数组s中第$c_i$个权重到第$c_{i+1}-1$个权重(索引以0开始)。
+> 集群边界索引决定了权重属于哪个集群。准确的来说，集群$$C_i$$中包含了权重数组s中第$$c_i$$个权重到第$$c_{i+1}-1$$个权重(索引以0开始)。
 
 因此：
 
 1. 每个集群都具有相同数量的权重值
 
-2. $C_{i+1}$中权重的重要性要高于$C_i$中的权重。
+2. $$C_{i+1}$$中权重的重要性要高于$$C_i$$中的权重。
 
 
-这个可以简单的将重要性排序后的数组s分为N份，并制定给每个集群。例如：$s=[1,2,3,4]$，N为2，我们可以设置$c_0=0, c_1 =2,c_2=4$，所以$C_0=$ {1, 2}，$C_1=${3, 4}。
+这个可以简单的将重要性排序后的数组s分为N份，并制定给每个集群。例如：$$s=[1,2,3,4]$$，N为2，我们可以设置$$c_0=0, c_1 =2,c_2=4$$，所以$$C_0=$${1, 2}，$$C_1=$${3, 4}。
 
-在开始对进行集群边界初始化时，我们在新集群边缘迭代的执行增量搜索(第6行到第11行)。每次迭代中，每个集群$C_i$和其边界$c_i$ 和$c_{i+1}$，我们会使用二分法在$c_{i-1}$到 $c_{i+1}$ 间查找$c_i$。对每个集群的候选边缘索引为$c'_i$，我们都会重新计算集群$C_{i-1}$ 和$C_i$的加权熵(新边界值只对加权熵有影响)，当心的加权熵$S'$大于当前的加权熵，则将边界更新为$c'_i$。
+在开始对进行集群边界初始化时，我们在新集群边缘迭代的执行增量搜索(第6行到第11行)。每次迭代中，每个集群$$C_i$$和其边界$$c_i$$ 和$$c_{i+1}$$，我们会使用二分法在$$c_{i-1}$$到 $$c_{i+1}$$ 间查找$$c_i$$。对每个集群的候选边缘索引为$$c'_i$$，我们都会重新计算集群$$C_{i-1}$$ 和$$C_i$$的加权熵(新边界值只对加权熵有影响)，当心的加权熵$$S'$$大于当前的加权熵，则将边界更新为$$c'_i$$。
 
-在获取新集群边界之后，我们需要计算每个集群中$C_k$ 的重要性(第13行)。我们获得集群$C_k$中表示权重的值$r_k$(第14行)。为了界定那些权重属于哪些集群，我们可以通过集群边缘权值——$b_k$进行判别(以及进行权值量化)(第15行)；例如，集群$C_i$包含有w个权值，w需要满足条件$b_k \le w < b_{k+1}$。函数Quantize实现了量化过程。简而言之就是，给定一个权重$w_n$，其会为相关集群$c_k$产生表达权重值$r_k$。
+在获取新集群边界之后，我们需要计算每个集群中$$C_k$$ 的重要性(第13行)。我们获得集群$$C_k$$中表示权重的值$$r_k$$(第14行)。为了界定那些权重属于哪些集群，我们可以通过集群边缘权值——$$b_k$$进行判别(以及进行权值量化)(第15行)；例如，集群$$C_i$$包含有w个权值，w需要满足条件$$b_k \le w < b_{k+1}$$。函数Quantize实现了量化过程。简而言之就是，给定一个权重$$w_n$$，其会为相关集群$c_k$产生表达权重值$$r_k$$。
 
 基于加权熵的聚类可以提供满意的级数，该级数为在第3节所序。最大化加权熵，在考虑数据的重要性的同时优化量化结果(以使熵最大化)。因此，考虑到0附近的值重要性很低，我们的方法将0附近的值都分到一个大集群中。虽然该集群涵盖了大量的权重值，但只是将不常见的值分到一个集群中而已。
 
@@ -195,7 +193,7 @@ Inline math: $$\int_{-\infty}^\infty g(x) dx$$
 
 激活输出的量化方式与权重的量化完全不同。因为权重在训练过程结束之后就已经固定，但是前向预测的激活输出与运行时给定的输入数据有很大的关系。这使得激活不太适合通过基于聚类的方法进行量化，因为聚类的方法需要稳定分布。
 
-根据我们的调研，基于对数的量化(LogQuant)对于激活输出的量化有较好的结果。LogQuant也有利于最大限度地降低成本(例如：专用硬件加速器)，因为它可以将乘法转换成按位移位操作(例如：$w\times2^x=w\kern -.3em < \kern -.3em <x$)。不过，LogQuant方法并不提供某种有效的搜索策略，来查找网络中每个层中最优的LogQuant参数(比如：底数和偏移)。
+根据我们的调研，基于对数的量化(LogQuant)对于激活输出的量化有较好的结果。LogQuant也有利于最大限度地降低成本(例如：专用硬件加速器)，因为它可以将乘法转换成按位移位操作(例如：$$w\times2^x=w\kern -.3em < \kern -.3em <x$$)。不过，LogQuant方法并不提供某种有效的搜索策略，来查找网络中每个层中最优的LogQuant参数(比如：底数和偏移)。
 
 ---
 
@@ -203,7 +201,7 @@ Inline math: $$\int_{-\infty}^\infty g(x) dx$$
 
 **function** BinaryToLogQuant($a_n$)
 
-&emsp;&emsp;**return** $round(\frac{16\times log_2a_n-fsr}{step}) +1$
+&emsp;&emsp;**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
 
 **function** LogQuantToBinary(index)
 
@@ -213,21 +211,21 @@ Inline math: $$\int_{-\infty}^\infty g(x) dx$$
 
 &emsp;&emsp;**else**
 
-&emsp;&emsp;&emsp;&emsp;**return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
+&emsp;&emsp;&emsp;&emsp;**return** $$2^{\frac{1}{16}\times (fsr +step·(index-1))}$$
 
-**function** WeightedLogQuantReLU($a_n$)
+**function** WeightedLogQuantReLU($$a_n$$)
 
-&emsp;&emsp;**if** $a_n$ < 0 **then**
-
-&emsp;&emsp;&emsp;&emsp;**return** 0
-
-&emsp;&emsp;level_idx $\leftarrow BinaryToLogQuant(a_n)$
-
-&emsp;&emsp;**if** level_idx $\le$ 0 **then**
+&emsp;&emsp;**if** $$a_n$$ < 0 **then**
 
 &emsp;&emsp;&emsp;&emsp;**return** 0
 
-&emsp;&emsp;**else if** level_idx $\ge$ N - 1 **then**
+&emsp;&emsp;level_idx $$\leftarrow BinaryToLogQuant(a_n)$$
+
+&emsp;&emsp;**if** level_idx $$\le$$ 0 **then**
+
+&emsp;&emsp;&emsp;&emsp;**return** 0
+
+&emsp;&emsp;**else if** level_idx $$\ge$$ N - 1 **then**
 
 &emsp;&emsp;&emsp;&emsp;**return** LogQuantToBinary(N - 1)
 
@@ -241,33 +239,33 @@ Inline math: $$\int_{-\infty}^\infty g(x) dx$$
 
 **function** RelativeFrequency(index, a)
 
-&emsp;&emsp;**for** k = 0 to$N_a$ - 1 **do**
+&emsp;&emsp;**for** k = 0 to $$N_a$$- 1 **do**
 
-&emsp;&emsp;&emsp;&emsp;evel_idx$_k \leftarrow$ BinaryToLogQuant($a_n$)
+&emsp;&emsp;&emsp;&emsp;evel_idx$$_k \leftarrow$$ BinaryToLogQuant($a_n$)
 
 &emsp;&emsp;**if** index == 0 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
+&emsp;&emsp;&emsp;&emsp;**return** $$\left| \{ a_n| level\_idx_n\le0\}\right|$$
 
 &emsp;&emsp;**else if** index == N - 1 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
+&emsp;&emsp;&emsp;&emsp;**return** $$\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$$
 
 &emsp;&emsp;**else**
 
-&emsp;&emsp;&emsp;&emsp;**return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
+&emsp;&emsp;&emsp;&emsp;**return** $$\left|\{ a_n | level\_idx_n =index \}  \right|$$
 
-* $N:$ 级数
-* $N_a$：激活输出的总量
-* $a_n$：激活输出中第n个值
-* $fsr$：最优的fsr值(整型)
-* $step$：最优的step值(2的倍数)
+* $$N:$$ 级数
+* $$N_a$$：激活输出的总量
+* $$a_n$$：激活输出中第n个值
+* $$fsr$$：最优的fsr值(整型)
+* $$step$$：最优的step值(2的倍数)
 
 ---
 
 我们对激活输出量化分为两步：修改过的 LogQuant方法和一个快速搜索LogQuant参数的策略。算法2展示我们在修改过的 LogQuant方法中使用到的主要函数。
 
-首先，我们修改了原始LogQuant方法用来提高整体的精确度和稳定性。与传统的LogQuant方法不同，我们采用了更小的对数底($\frac{1}{8}$的倍数)和偏移($\frac{1}{16}$的倍数)，分别对应算法2中的‘step’和'fsr'。我们将第一量化级别定为零激活，并且其他的对数值对应相应的等级。例如，当我们要对激活输出进行3位量化时，第一级为0，第二级为$2^{\frac{fsr}{16}}$，第三级为$2^{\frac{fsr+step}{16}}$，以此类推。简单起见，我们将我们的输出激活量化整合为线性单元激活函数的一部分，在算法2中的WeightedLogQuantReLU进行描述。
+首先，我们修改了原始LogQuant方法用来提高整体的精确度和稳定性。与传统的LogQuant方法不同，我们采用了更小的对数底($$\frac{1}{8}$$的倍数)和偏移($$\frac{1}{16}$$的倍数)，分别对应算法2中的‘step’和'fsr'。我们将第一量化级别定为零激活，并且其他的对数值对应相应的等级。例如，当我们要对激活输出进行3位量化时，第一级为0，第二级为$$2^{\frac{fsr}{16}}$$，第三级为$$2^{\frac{fsr+step}{16}}$$，以此类推。简单起见，我们将我们的输出激活量化整合为线性单元激活函数的一部分，在算法2中的WeightedLogQuantReLU进行描述。
 
 其次，为我们的LogQuant变体提供了一种参数搜索的方法，其能找到最合适的底数和偏移，来保证输出质量损失最小化。我们的想法是利用的权重量化中加权熵最大化的概念。算法2中也有计算重要性I的函数(ReprImportance)和计算相对频率P的函数(RelativeFrequency)(这两个部分是用来计算加权熵到的)。训练过程中，为了在LogQuant中最大化给定每层激活输出的加权熵，我们对“fsr”和“step”进行仔细的搜索，因为可能的基数和偏移量通常都很小(例如，我们的经验是底数为16，偏移在500左右)。
 
