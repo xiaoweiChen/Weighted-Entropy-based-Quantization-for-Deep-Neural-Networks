@@ -125,17 +125,17 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;$$ c_0, ..., c_N \leftarrow$$ initial cluster boundary
 
-​	**while** S is increased **do**
+&emsp;**while** S is increased **do**
 
-​		**for** k = 1 to $N - 1$ **do**
+&emsp;&emsp;**for** k = 1 to $$N - 1$$ **do**
 
-​			**for** $c_k'  \in [c_{k-1}, c_{k+1}]$ **do**
+&emsp;&emsp;&emsp;**for** $$c_k'  \in [c_{k-1}, c_{k+1}]$$ **do**
 
-​				$S' \leftarrow$ S with $c_0, ..., c'_k, ..., c_N$ 
+&emsp;&emsp;&emsp;&emsp;$$S' \leftarrow$$ S with $c_0, ..., c'_k, ..., c_N$ 
 
-​				**if** $S' > S$ **then**
+&emsp;&emsp;&emsp;&emsp;**if** $$S' > S$$ **then**
 
-​					$c_k \leftarrow c'_k$ 
+&emsp;&emsp;&emsp;&emsp;&emsp;$$c_k \leftarrow c'_k$$ 
 
 ​	**for** k = 0 to $N - 1$ **do**
 
