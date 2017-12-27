@@ -93,15 +93,15 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 基于每个权重的重要性，我们推导出一种用于评估集群结果(基于加权熵)质量的方式(例如：量化结果)。加权熵源于物理学中熵的概念，旨在考虑数据的重要性。
 
-对于一组集群![](http://latex.codecogs.com/gif.latex?C_0%2C%20...%2C%20C_%7BN-1%7D)，加权熵S可定义为：
+对于一组集群![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20C_0%2C...%2CC_%7BN-1%7D)，加权熵S可定义为：
 
-(1) $S = -\sum_nI_nP_nlogP_n$
+(1) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20S%20%3D%20-%5Csum_nI_nP_nlogP_n)
 
 这里：
 
-(2) $P_n = \frac{\left| C_n \right|}{\sum_k\left| C_k \right|}$ (相对频率)
+(2) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20P_n%20%3D%20%5Cfrac%7B%5Cleft%7C%20C_n%20%5Cright%7C%7D%7B%5Csum_k%5Cleft%7C%20C_k%20%5Cright%7C%7D) (相对频率)
 
-(3) $I_n = \frac{\sum_mi_{(n,m)}}{\left| C_n \right|}$ (代表重要性)
+(3) ![](http://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20I_n%20%3D%20%5Cfrac%7B%5Csum_mi_%7B%28n%2Cm%29%7D%7D%7B%5Cleft%7C%20C_n%20%5Cright%7C%7D) (代表重要性)
 
 在这个等式中，$P_n$表示有多少个权重在集群$C_n$的范围内，并且$I_n$代表$C_n$集群中所有权重的平均重要性。大致的说，集群组中具有大量的权重，将会生成很高的的$I_n$，不过$P_n$非常小(高重要性的频率低)。根据我们的经验，通过找到集群组的最大S值，其量级会稀疏的分布在特别大的值或特别小的值附近，就如图1所示。因此，我们认为我们的权重量化有如下问题：
 
