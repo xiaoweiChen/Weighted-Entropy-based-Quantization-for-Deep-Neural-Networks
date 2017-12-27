@@ -117,41 +117,41 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** OptSearch(N, w)
 
-​	**for** k = 0 to $N_w$ - 1 do
+​	&emsp;&emsp;**for** k = 0 to $N_w$ - 1 do
 
-​		$i_k\leftarrow f_i(w_k)$
+​		&emsp;&emsp;&emsp;&emsp;$i_k\leftarrow f_i(w_k)$
 
-​	$s \leftarrow sort([i_0,...,i_{N_w -1}] )$
+​	&emsp;&emsp;$s \leftarrow sort([i_0,...,i_{N_w -1}] )$
 
-​	$ c_0, ..., c_N \leftarrow$ initial cluster boundary
+​	&emsp;&emsp;$ c_0, ..., c_N \leftarrow$ initial cluster boundary
 
-​	**while** S is increased **do**
+&emsp;&emsp;	**while** S is increased **do**
 
-​		**for** k = 1 to $N - 1$ **do**
+​	&emsp;&emsp;	&emsp;&emsp;**for** k = 1 to $N - 1​$ **do**
 
-​			**for** $c_k'  \in [c_{k-1}, c_{k+1}]$ **do**
+​	&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;	**for** $c_k'  \in [c_{k-1}, c_{k+1}]$ **do**
 
-​				$S' \leftarrow$ S with $c_0, ..., c'_k, ..., c_N$ 
+​	&emsp;&emsp;	&emsp;&emsp;		&emsp;&emsp;&emsp;&emsp;$S' \leftarrow$ S with $c_0, ..., c'_k, ..., c_N$ 
 
-​				**if** $S' > S$ **then**
+​		&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	**if** $S' > S$ **then**
 
-​					$c_k \leftarrow c'_k$ 
+​				&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;$c_k \leftarrow c'_k$ 
 
-​	**for** k = 0 to $N - 1$ **do**
+&emsp;&emsp;	**for** k = 0 to $N - 1$ **do**
 
-​		$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$
+​	&emsp;&emsp;	&emsp;&emsp;$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$
 
- 		$r_k \leftarrow f^{-1}_i(I_k)$
+ &emsp;&emsp;&emsp;&emsp;		$r_k \leftarrow f^{-1}_i(I_k)$
 
-​		$b_k \leftarrow f^{-1}_i(s[c_k])$
+&emsp;&emsp;&emsp;&emsp;		$b_k \leftarrow f^{-1}_i(s[c_k])$
 
-​	$b_N \leftarrow \infty$
+&emsp;&emsp;	$b_N \leftarrow \infty$
 
-​	**return** $[r_0:r_{N-1}],[b_0:b_N]$
+&emsp;&emsp;	**return** $[r_0:r_{N-1}],[b_0:b_N]$
 
 **function** Quantize($w_n$, [$r_0:r_{N-1}$], [$b_0:b_N$])
 
-​	**return** $r_k$ for k 满足条件 $b_k \le w_n < b_{k+1}$
+​	&emsp;&emsp;**return** $r_k$ for k 满足条件 $b_k \le w_n < b_{k+1}$
 
 * $N$：级数
 * $N_w$：权重的数量
@@ -201,59 +201,59 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** BinaryToLogQuant($a_n$)
 
-​	**return** $round(\frac{16\times log_2a_n-fsr}{step}) +1$
+&emsp;&emsp;**return** $round(\frac{16\times log_2a_n-fsr}{step}) +1$
 
 **function** LogQuantToBinary(index)
 
-​	**if** index == 0 **then**
+&emsp;&emsp;**if** index == 0 **then**
 
-​		**return** 0
+&emsp;&emsp;*&emsp;&emsp;*return** 0
 
-​	**else**
+&emsp;&emsp;**else**
 
-​		**return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
+&emsp;&emsp;*&emsp;&emsp;*return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
 
 **function** WeightedLogQuantReLU($a_n$)
 
-​	**if** $a_n$ < 0 **then**
+&emsp;&emsp;**if** $a_n$ < 0 **then**
 
-​		**return** 0
+&emsp;&emsp;*&emsp;&emsp;*return** 0
 
-​	level_idx $\leftarrow BinaryToLogQuant(a_n)$
+&emsp;&emsp;level_idx $\leftarrow BinaryToLogQuant(a_n)$
 
-​	**if** level_idx $\le$ 0 **then**
+&emsp;&emsp;**if** level_idx $\le$ 0 **then**
 
-​		**return** 0
+&emsp;&emsp;*&emsp;&emsp;*return** 0
 
-​	**else if** level_idx $\ge$ N - 1 **then**
+&emsp;&emsp;**else if** level_idx $\ge$ N - 1 **then**
 
-​		**return** LogQuantToBinary(N - 1)
+&emsp;&emsp;*&emsp;&emsp;*return** LogQuantToBinary(N - 1)
 
-​	**else**
+&emsp;&emsp;**else**
 
-​		**return** LogQuantToBinary(level_idx)
+&emsp;&emsp;*&emsp;&emsp;*return** LogQuantToBinary(level_idx)
 
 **function** ReprImportance(index)
 
-​	**return** LogQuantToBinary(index)
+&emsp;&emsp;**return** LogQuantToBinary(index)
 
 **function** RelativeFrequency(index, a)
 
-​	**for** k = 0 to$N_a$ - 1 **do**
+&emsp;&emsp;**for** k = 0 to$N_a$ - 1 **do**
 
-​		level_idx$_k \leftarrow$ BinaryToLogQuant($a_n$)
+&emsp;&emsp;&emsp;&emsp;evel_idx$_k \leftarrow$ BinaryToLogQuant($a_n$)
 
-​	**if** index == 0 **then**
+&emsp;&emsp;**if** index == 0 **then**
 
-​		**return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
+&emsp;&emsp;*&emsp;&emsp;*return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
 
-​	**else if** index == N - 1 **then**
+&emsp;&emsp;**else if** index == N - 1 **then**
 
-​		**return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
+&emsp;&emsp;*&emsp;&emsp;*return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
 
-​	**else**
+&emsp;&emsp;**else**
 
-​		**return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
+&emsp;&emsp;*&emsp;&emsp;*return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
 
 * $N:$ 级数
 * $N_a$：激活输出的总量
