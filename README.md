@@ -127,7 +127,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;&emsp;	**while** S is increased **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;**for** k = 1 to $N - 1​$ **do**
+​	&emsp;&emsp;	&emsp;&emsp;**for** k = 1 to $N - 1$ **do**
 
 ​	&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;	**for** $c_k'  \in [c_{k-1}, c_{k+1}]$ **do**
 
@@ -207,31 +207,31 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;&emsp;**if** index == 0 **then**
 
-&emsp;&emsp;*&emsp;&emsp;*return** 0
+&emsp;&emsp;&emsp;&emsp;**return** 0
 
 &emsp;&emsp;**else**
 
-&emsp;&emsp;*&emsp;&emsp;*return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
+&emsp;&emsp;&emsp;&emsp;**return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
 
 **function** WeightedLogQuantReLU($a_n$)
 
 &emsp;&emsp;**if** $a_n$ < 0 **then**
 
-&emsp;&emsp;*&emsp;&emsp;*return** 0
+&emsp;&emsp;&emsp;&emsp;**return** 0
 
 &emsp;&emsp;level_idx $\leftarrow BinaryToLogQuant(a_n)$
 
 &emsp;&emsp;**if** level_idx $\le$ 0 **then**
 
-&emsp;&emsp;*&emsp;&emsp;*return** 0
+&emsp;&emsp;&emsp;&emsp;**return** 0
 
 &emsp;&emsp;**else if** level_idx $\ge$ N - 1 **then**
 
-&emsp;&emsp;*&emsp;&emsp;*return** LogQuantToBinary(N - 1)
+&emsp;&emsp;&emsp;&emsp;**return** LogQuantToBinary(N - 1)
 
 &emsp;&emsp;**else**
 
-&emsp;&emsp;*&emsp;&emsp;*return** LogQuantToBinary(level_idx)
+&emsp;&emsp;&emsp;&emsp;**return** LogQuantToBinary(level_idx)
 
 **function** ReprImportance(index)
 
@@ -245,15 +245,15 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;&emsp;**if** index == 0 **then**
 
-&emsp;&emsp;*&emsp;&emsp;*return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
+&emsp;&emsp;&emsp;&emsp;**return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
 
 &emsp;&emsp;**else if** index == N - 1 **then**
 
-&emsp;&emsp;*&emsp;&emsp;*return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
+&emsp;&emsp;&emsp;&emsp;**return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
 
 &emsp;&emsp;**else**
 
-&emsp;&emsp;*&emsp;&emsp;*return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
+&emsp;&emsp;&emsp;&emsp;**return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
 
 * $N:$ 级数
 * $N_a$：激活输出的总量
