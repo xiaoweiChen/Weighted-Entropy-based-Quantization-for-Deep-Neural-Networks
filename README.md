@@ -137,21 +137,21 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 &emsp;&emsp;&emsp;&emsp;&emsp;$$c_k \leftarrow c'_k$$ 
 
-​	**for** k = 0 to $N - 1$ **do**
+&emsp;**for** k = 0 to $$N - 1$$ **do**
 
-​		$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$
+&emsp;&emsp;$$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$$
 
- 		$r_k \leftarrow f^{-1}_i(I_k)$
+&emsp;&emsp;$$r_k \leftarrow f^{-1}_i(I_k)$$
 
-​		$b_k \leftarrow f^{-1}_i(s[c_k])$
+&emsp;&emsp;$$b_k \leftarrow f^{-1}_i(s[c_k])$$
 
-​	$b_N \leftarrow \infty$
+&emsp;$$b_N \leftarrow \infty$$
 
-​	**return** $[r_0:r_{N-1}],[b_0:b_N]$
+&emsp;**return** $$[r_0:r_{N-1}],[b_0:b_N]$$
 
-**function** Quantize($w_n$, [$r_0:r_{N-1}$], [$b_0:b_N$])
+**function** Quantize($$w_n$$, [$$r_0:r_{N-1}$$], [$$b_0:b_N$]$)
 
-​	**return** $r_k$ for k 满足条件 $b_k \le w_n < b_{k+1}$
+​&emsp;**return** $$r_k$$ for k 满足条件 $$b_k \le w_n < b_{k+1}$$
 
 * $N$：级数
 * $N_w$：权重的数量
