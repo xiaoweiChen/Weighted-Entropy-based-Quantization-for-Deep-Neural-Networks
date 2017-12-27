@@ -113,53 +113,53 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 ----
 
-**算法1：权重量化**
+****算法1：权重量化**
 
 **function** OptSearch(N, w)
 
-​	&emsp;&emsp;**for** k = 0 to $$N_w$$ - 1 do
+​	**for** k = 0 to $N_w$ - 1 do
 
-​		&emsp;&emsp;&emsp;&emsp;$$i_k\leftarrow f_i(w_k)$$
+​		$i_k\leftarrow f_i(w_k)$
 
-​	&emsp;&emsp;$$s \leftarrow sort([i_0,...,i_{N_w -1}] )$$
+​	$s \leftarrow sort([i_0,...,i_{N_w -1}] )$
 
-​	&emsp;&emsp;$$c_0, ..., c_N \leftarrow$$ initial cluster boundary
+​	$ c_0, ..., c_N \leftarrow$ initial cluster boundary
 
-&emsp;&emsp;	**while** S is increased **do**
+​	**while** S is increased **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;**for** k = 1 to $$N - 1$$ **do**
+​		**for** k = 1 to $N - 1$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;	**for** $$c_k'  \in [c_{k-1}, c_{k+1}]$$ **do**
+​			**for** $c_k'  \in [c_{k-1}, c_{k+1}]$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;		&emsp;&emsp;&emsp;&emsp; $$S' \leftarrow$$ S with $$c_0, ..., c'_k, ..., c_N$$ 
+​				$S' \leftarrow$ S with $c_0, ..., c'_k, ..., c_N$ 
 
-​		&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	**if** $$S' > S$$ **then**
+​				**if** $S' > S$ **then**
 
-​				&emsp;&emsp;	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;$$c_k \leftarrow c'_k$$ 
+​					$c_k \leftarrow c'_k$ 
 
-&emsp;&emsp;	**for** k = 0 to $$N - 1$$ **do**
+​	**for** k = 0 to $N - 1$ **do**
 
-​	&emsp;&emsp;	&emsp;&emsp;$$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$$
+​		$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$
 
- &emsp;&emsp;&emsp;&emsp;		$$r_k \leftarrow f^{-1}_i(I_k)$$
+ 		$r_k \leftarrow f^{-1}_i(I_k)$
 
-&emsp;&emsp;&emsp;&emsp;		$$b_k \leftarrow f^{-1}_i(s[c_k])$$
+​		$b_k \leftarrow f^{-1}_i(s[c_k])$
 
-&emsp;&emsp;	$$b_N \leftarrow \infty$$
+​	$b_N \leftarrow \infty$
 
-&emsp;&emsp;	**return** $$[r_0:r_{N-1}],[b_0:b_N]$$
+​	**return** $[r_0:r_{N-1}],[b_0:b_N]$
 
-**function** Quantize($$w_n$$, [$$r_0:r_{N-1}$$], [$$b_0:b_N$$])
+**function** Quantize($w_n$, [$r_0:r_{N-1}$], [$b_0:b_N$])
 
-​	&emsp;&emsp;**return** $$r_k$$ for k 满足条件 $$b_k \le w_n < b_{k+1}$$
+​	**return** $r_k$ for k 满足条件 $b_k \le w_n < b_{k+1}$
 
-* $$N$$：级数
-* $$N_w$$：权重的数量
-* $$w_n$$：第n个权重值
-* $$i_n$$：第n个权重的重要性
-* $$f_i$$：映射函数的重要性
-* $$c_i$$：集群的边界索引
-* $$S$$： 整体的加权熵
+- $N$：级数
+- $N_w$：权重的数量
+- $w_n$：第n个权重值
+- $i_n$：第n个权重的重要性
+- $f_i$：映射函数的重要性
+- $c_i$：集群的边界索引
+- $S$： 整体的加权熵
 
 ---
 
@@ -197,69 +197,73 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 ---
 
-**算法2：激活输出量化**
+* **算法2：激活输出量化**
 
-**function** BinaryToLogQuant($$a_n$$)
+  **function** BinaryToLogQuant($a_n$)
 
-&emsp;&emsp;**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
+  ​	**return** $round(\frac{16\times log_2a_n-fsr}{step}) +1$
 
-**function** LogQuantToBinary(index)
+  **function** LogQuantToBinary(index)
 
-&emsp;&emsp;**if** index == 0 **then**
+  ​	**if** index == 0 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** 0
+  ​		**return** 0
 
-&emsp;&emsp;**else**
+  ​	**else**
 
-&emsp;&emsp;&emsp;&emsp;**return** $$2^{\frac{1}{16}\times (fsr +step·(index-1))}$$
+  ​		**return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
 
-**function** WeightedLogQuantReLU($$a_n$$)
+  **function** WeightedLogQuantReLU($a_n$)
 
-&emsp;&emsp;**if** $$a_n$$ < 0 **then**
+  ​	**if** $a_n$ < 0 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** 0
+  ​		**return** 0
 
-&emsp;&emsp;level_idx $$\leftarrow BinaryToLogQuant(a_n)$$
+  ​	level_idx $\leftarrow BinaryToLogQuant(a_n)$
 
-&emsp;&emsp;**if** level_idx $$\le$$ 0 **then**
+  ​	**if** level_idx $\le$ 0 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** 0
+  ​		**return** 0
 
-&emsp;&emsp;**else if** level_idx $$\ge$$ N - 1 **then**
+  ​	**else if** level_idx $\ge$ N - 1 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** LogQuantToBinary(N - 1)
+  ​		**return** LogQuantToBinary(N - 1)
 
-&emsp;&emsp;**else**
+  ​	**else**
 
-&emsp;&emsp;&emsp;&emsp;**return** LogQuantToBinary(level_idx)
+  ​		**return** LogQuantToBinary(level_idx)
 
-**function** ReprImportance(index)
+  **function** ReprImportance(index)
 
-&emsp;&emsp;**return** LogQuantToBinary(index)
+  ​	**return** LogQuantToBinary(index)
 
-**function** RelativeFrequency(index, a)
+  **function** RelativeFrequency(index, a)
 
-&emsp;&emsp;**for** k = 0 to $$N_a$$- 1 **do**
+  ​	**for** k = 0 to$N_a$ - 1 **do**
 
-&emsp;&emsp;&emsp;&emsp;evel_idx $$_k \leftarrow$$ BinaryToLogQuant($$a_n$$)
+  ​		level_idx$_k \leftarrow$ BinaryToLogQuant($a_n$)
 
-&emsp;&emsp;**if** index == 0 **then**
+  ​	**if** index == 0 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** $$\left| \{ a_n| level\_idx_n\le0\}\right|$$
+  ​		**return** $\left| \{ a_n| level\_idx_n\le0\}\right|$
 
-&emsp;&emsp;**else if** index == N - 1 **then**
+  ​	**else if** index == N - 1 **then**
 
-&emsp;&emsp;&emsp;&emsp;**return** $$\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$$
+  ​		**return** $\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$
 
-&emsp;&emsp;**else**
+  ​	**else**
 
-&emsp;&emsp;&emsp;&emsp;**return** $$\left|\{ a_n | level\_idx_n =index \}  \right|$$
+  ​		**return** $\left|\{ a_n | level\_idx_n =index \}  \right|$
 
-* $$N:$$ 级数
-* $$N_a$$：激活输出的总量
-* $$a_n$$：激活输出中第n个值
-* $$fsr$$：最优的fsr值(整型)
-* $$step$$：最优的step值(2的倍数)
+* $N:$ 级数
+
+* $N_a$：激活输出的总量
+
+* $a_n$：激活输出中第n个值
+
+* $fsr$：最优的fsr值(整型)
+
+* $step$：最优的step值(2的倍数)
 
 ---
 
