@@ -193,15 +193,15 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 激活输出的量化方式与权重的量化完全不同。因为权重在训练过程结束之后就已经固定，但是前向预测的激活输出与运行时给定的输入数据有很大的关系。这使得激活不太适合通过基于聚类的方法进行量化，因为聚类的方法需要稳定分布。
 
-根据我们的调研，基于对数的量化(LogQuant)对于激活输出的量化有较好的结果。LogQuant也有利于最大限度地降低成本(例如：专用硬件加速器)，因为它可以将乘法转换成按位移位操作(例如：$$w\times2^x=w\kern -.3em < \kern -.3em <x$$)。不过，LogQuant方法并不提供某种有效的搜索策略，来查找网络中每个层中最优的LogQuant参数(比如：底数和偏移)。
+根据我们的调研，基于对数的量化(LogQuant)对于激活输出的量化有较好的结果。LogQuant也有利于最大限度地降低成本(例如：专用硬件加速器)，因为它可以将乘法转换成按位移位操作(例如：$$w\times2^x=w\kern -.3em <<x$$)。不过，LogQuant方法并不提供某种有效的搜索策略，来查找网络中每个层中最优的LogQuant参数(比如：底数和偏移)。
 
 ---
 
 **算法2：激活输出量化**
 
-**function** BinaryToLogQuant($a_n$)
+**function** BinaryToLogQuant($$a_n$$)
 
-​	**return** $round(\frac{16\times log_2a_n-fsr}{step}) +1$
+​	**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
 
 **function** LogQuantToBinary(index)
 
@@ -211,21 +211,21 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 ​	**else**
 
-​		**return** $2^{\frac{1}{16}\times (fsr +step·(index-1))}$
+​		**return** $$2^{\frac{1}{16}\times (fsr +step·(index-1))}$$
 
-**function** WeightedLogQuantReLU($a_n$)
+**function** WeightedLogQuantReLU($$a_n$$)
 
-​	**if** $a_n$ < 0 **then**
-
-​		**return** 0
-
-​	level_idx $\leftarrow BinaryToLogQuant(a_n)$
-
-​	**if** level_idx $\le$ 0 **then**
+​	**if** $$a_n$$ < 0 **then**
 
 ​		**return** 0
 
-​	**else if** level_idx $\ge$ N - 1 **then**
+​	level_idx $$\leftarrow BinaryToLogQuant(a_n)$$
+
+​	**if** level_idx $$\le$$ 0 **then**
+
+​		**return** 0
+
+​	**else if** level_idx $$\ge$$ N - 1 **then**
 
 ​		**return** LogQuantToBinary(N - 1)
 
@@ -239,9 +239,9 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** RelativeFrequency(index, a)
 
-​	**for** k = 0 to$N_a$ - 1 **do**
+​	**for** k = 0 to $$N_a$$ - 1 **do**
 
-​		level_idx$_k \leftarrow$ BinaryToLogQuant($a_n$)
+​		level_idx$$_k \leftarrow$$ BinaryToLogQuant($a_n$)
 
 ​	**if** index == 0 **then**
 
