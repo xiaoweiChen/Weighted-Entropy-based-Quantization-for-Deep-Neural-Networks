@@ -211,7 +211,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 ​	**else**
 
-​		**return** $$2^{\frac{1}{16}\times (fsr +step·(index-1))}$$
+​		**return** $$2^{\frac{1}{16}\times (fsr +step \times (index-1))}$$
 
 **function** WeightedLogQuantReLU($$a_n$$)
 
