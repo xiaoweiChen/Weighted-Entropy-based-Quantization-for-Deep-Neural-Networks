@@ -104,41 +104,41 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** OptSearch\(N, w\)
 
-&emsp;**for** k = 0 to $$N_w$$ - 1 do
+ **for** k = 0 to $$N_w$$ - 1 do
 
-&emsp;&emsp;$$i_k\leftarrow f_i(w_k)$$
+  $$i_k\leftarrow f_i(w_k)$$
 
-&emsp;$$s \leftarrow sort([i_0,...,i_{N_w -1}] )$$
+ $$s \leftarrow sort([i_0,...,i_{N_w -1}] )$$
 
-&emsp;$$ c_0, ..., c_N \leftarrow$$ initial cluster boundary
+ $$ c_0, ..., c_N \leftarrow$$ initial cluster boundary
 
-&emsp;**while** S is increased **do**
+ **while** S is increased **do**
 
-&emsp;&emsp;**for** k = 1 to $$N - 1$$ **do**
+  **for** k = 1 to $$N - 1$$ **do**
 
-&emsp;&emsp;&emsp;**for** $$c_k'  \in [c_{k-1}, c_{k+1}]$$ **do**
+   **for** $$c_k'  \in [c_{k-1}, c_{k+1}]$$ **do**
 
-&emsp;&emsp;&emsp;&emsp;$$S' \leftarrow$$ S with $$c_0, ..., c'_k, ..., c_N$$
+    $$S' \leftarrow$$ S with $$c_0, ..., c'_k, ..., c_N$$
 
-&emsp;&emsp;&emsp;&emsp;**if** $$S' > S$$ **then**
+    **if** $$S' > S$$ **then**
 
-&emsp;&emsp;&emsp;&emsp;&emsp;$$c_k \leftarrow c'_k$$
+     $$c_k \leftarrow c'_k$$
 
-&emsp;**for** k = 0 to $$N - 1$$ **do**
+ **for** k = 0 to $$N - 1$$ **do**
 
-&emsp;&emsp;$$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$$
+  $$I_k \leftarrow \sum_{i=c_k}^{c_{k+1}-1}s[i]/(c_{k+1}-c_k)$$
 
-&emsp;&emsp;$$r_k \leftarrow f^{-1}_i(I_k)$$
+  $$r_k \leftarrow f^{-1}_i(I_k)$$
 
-&emsp;&emsp;$$b_k \leftarrow f^{-1}_i(s[c_k])$$
+  $$b_k \leftarrow f^{-1}_i(s[c_k])$$
 
-&emsp;$$b_N \leftarrow \infty$$
+ $$b_N \leftarrow \infty$$
 
-&emsp;**return** $$[r_0:r_{N-1}],[b_0:b_N]$$
+ **return** $$[r_0:r_{N-1}],[b_0:b_N]$$
 
 **function** Quantize\($$w_n$$, \[$$r_0:r_{N-1}$$\], \[$$b_0:b_N]$$\)
 
-​&emsp;**return** $$r_k$$ for k 满足条件 $$b_k \le w_n < b_{k+1}$$
+​ **return** $$r_k$$ for k 满足条件 $$b_k \le w_n < b_{k+1}$$
 
 * $$N$$：级数
 * $$N_w$$：权重的数量
@@ -166,7 +166,7 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 这个可以简单的将重要性排序后的数组s分为N份，并制定给每个集群。例如：$$s=[1,2,3,4]$$，N为2，我们可以设置$$c_0=0, c_1 =2,c_2=4$$，所以$$C_0=$$ {1, 2}，$$C_1=$${3, 4}。
 
-在开始对进行集群边界初始化时，我们在新集群边缘迭代的执行增量搜索\(第6行到第11行\)。每次迭代中，每个集群$$C_i$$和其边界$$c_i$$ 和$$c_{i+1}$$，我们会使用二分法在$$c_{i-1}$$到 $$c_{i+1}$$ 间查找$$c_i$$。对每个集群的候选边缘索引为$$c'_i$$，我们都会重新计算集群$$C_{i-1}$$ 和$$C_i$$的加权熵\(新边界值只对加权熵有影响\)，当心的加权熵$$S'$$大于当前的加权熵，则将边界更新为$$c'_i$$。
+在开始对进行集群边界初始化时，我们在新集群边缘迭代的执行增量搜索\(第6行到第11行\)。每次迭代中，每个集群$$C_i$$和其边界$$c_i$$ 和$$c_{i+1}$$，我们会使用二分法在$$c_{i-1}$$到 $$c_{i+1}$$ 间查找$$c_i$$。对每个集群的候选边缘索引为$$c'_i$$，我们都会重新计算集群$$C_{i-1}$$ 和$$C_i$$的加权熵\(新边界值只对加权熵有影响\)，当新的加权熵$$S'$$大于当前的加权熵，则将边界更新为$$c'_i$$。
 
 在获取新集群边界之后，我们需要计算每个集群中$$C_k$$ 的重要性\(第13行\)。我们获得集群$$C_k$$中表示权重的值$$r_k$$\(第14行\)。为了界定那些权重属于哪些集群，我们可以通过集群边缘权值——$$b_k$$进行判别\(以及进行权值量化\)\(第15行\)；例如，集群$$C_i$$包含有w个权值，w需要满足条件$$b_k \le w < b_{k+1}$$。函数Quantize实现了量化过程。简而言之就是，给定一个权重$$w_n$$，其会为相关集群$$c_k$$产生表达权重值$$r_k$$。
 
@@ -184,65 +184,65 @@ Zhou等人创造了DoReFa-Net，其对已量化的权重和有界的激活输出
 
 **function** BinaryToLogQuant\($$a_n$$\)
 
-&emsp;**return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
+ **return** $$round(\frac{16\times log_2a_n-fsr}{step}) +1$$
 
 **function** LogQuantToBinary\(index\)
 
-&emsp;**if** index == 0 **then**
+ **if** index == 0 **then**
 
-&emsp;&emsp;**return** 0
+  **return** 0
 
-&emsp;**else**
+ **else**
 
-&emsp;&emsp;**return** $$2^{\frac{1}{16}\times (fsr +step \times (index-1))}$$
+  **return** $$2^{\frac{1}{16}\times (fsr +step \times (index-1))}$$
 
 **function** WeightedLogQuantReLU\($$a_n$$\)
 
-&emsp;**if** $$a_n$$ &lt; 0 **then**
+ **if** $$a_n$$ &lt; 0 **then**
 
-&emsp;&emsp;**return** 0
+  **return** 0
 
-&emsp;level_idx $$\leftarrow BinaryToLogQuant(a_n)$$
+ level\_idx $$\leftarrow BinaryToLogQuant(a_n)$$
 
-&emsp;**if** level\_idx $$\le$$ 0 **then**
+ **if** level\_idx $$\le$$ 0 **then**
 
-&emsp;&emsp;**return** 0
+  **return** 0
 
-&emsp;**else if** level\_idx $$\ge$$ N - 1 **then**
+ **else if** level\_idx $$\ge$$ N - 1 **then**
 
-&emsp;&emsp;**return** LogQuantToBinary\(N - 1\)
+  **return** LogQuantToBinary\(N - 1\)
 
-&emsp;**else**
+ **else**
 
-&emsp;&emsp;**return** LogQuantToBinary\(level\_idx\)
+  **return** LogQuantToBinary\(level\_idx\)
 
 **function** ReprImportance\(index\)
 
-&emsp;**return** LogQuantToBinary\(index\)
+ **return** LogQuantToBinary\(index\)
 
 **function** RelativeFrequency\(index, a\)
 
-​&emsp;**for** k = 0 to $$N_a$$ - 1 **do**
+​ **for** k = 0 to $$N_a$$ - 1 **do**
 
-&emsp;&emsp;level_idx$$_k \leftarrow$$ BinaryToLogQuant\($$a_n$$\)
+  level\_idx$$_k \leftarrow$$ BinaryToLogQuant\($$a_n$$\)
 
-&emsp;**if** index == 0 **then**
+ **if** index == 0 **then**
 
-&emsp;&emsp;**return** $$\left| \{ a_n| level\_idx_n\le0\}\right|$$
+  **return** $$\left| \{ a_n| level\_idx_n\le0\}\right|$$
 
-&emsp;**else if** index == N - 1 **then**
+ **else if** index == N - 1 **then**
 
-&emsp;&emsp;**return** $$\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$$
+  **return** $$\left|\{ a_n | level\_idx_n \ge N -1 \}  \right|$$
 
-&emsp;**else**
+ **else**
 
-&emsp;&emsp;**return** $$\left|\{ a_n | level\_idx_n =index \}  \right|$$
+  **return** $$\left|\{ a_n | level\_idx_n =index \}  \right|$$
 
 * $$N:$$ 级数
 * $$N_a$$：激活输出的总量
 * $$a_n$$：激活输出中第n个值
-* $$fsr$$：最优的fsr值(整型)
-* $$step$$：最优的step值(2的倍数)
+* $$fsr$$：最优的fsr值\(整型\)
+* $$step$$：最优的step值\(2的倍数\)
 
 ---
 
@@ -333,7 +333,7 @@ ResNet，据我们所知，本文是第一篇对具有50层和101层的网络进
 
 #### 5.1.4 分层量化的可行性研究
 
-在之前的章节我，我们对网络中所有层使用相同的位宽表示。不过，根据我们的观察，不同的层对于量化位宽的敏感度不同。因此，我们研究层级\(_layer-wise_\)量化的可行性，也就是不同的层使用不同的位宽表示。在这项研究中，我们基于AlexNet评估了四种为每层指定位宽的方式：单调递减\(Dec\)，单调递增\(Inc\)，凹形\(Doncave\)和凸形\(Convex\)。所有四种方案都被设计成都具有相同的位数。例如，单调递减方法对第一个卷积层使用6位表示权重/激活输出，那么其他方法也一样；同时，对最后一个全连接层使用2位表示权重/激活输出，那么其他方法也一样。
+在之前的章节中，我们对网络中所有层使用相同的位宽表示。不过，根据我们的观察，不同的层对于量化位宽的敏感度不同。因此，我们研究层级\(_layer-wise_\)量化的可行性，也就是不同的层使用不同的位宽表示。在这项研究中，我们基于AlexNet评估了四种为每层指定位宽的方式：单调递减\(Dec\)，单调递增\(Inc\)，凹形\(Doncave\)和凸形\(Convex\)。所有四种方案都被设计成都具有相同的位数。例如，单调递减方法对第一个卷积层使用6位表示权重/激活输出，那么其他方法也一样；同时，对最后一个全连接层使用2位表示权重/激活输出，那么其他方法也一样。
 
 |  | Dec | Inc | Concave | Convex |
 | :---: | :---: | :---: | :---: | :---: |
